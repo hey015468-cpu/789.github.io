@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>木洞山歌 · 多页沉浸式非遗体验</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 样式保持不变 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', 'Noto Serif SC', system-ui, sans-serif; background: #FEF9E6; color: #2C2418; line-height: 1.5; overflow-x: hidden; }
+        :root { --primary: #B76E2E; --primary-dark: #8B4A1A; --secondary: #5D8A3C; --accent: #D8A24A; --shadow-sm: 0 8px 20px rgba(0,0,0,0.05); --shadow-md: 0 12px 28px rgba(0,0,0,0.08); }
+        .nav-bar { background: #FFF8EF; backdrop-filter: blur(10px); border-bottom: 2px solid #F0E2D0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.03); }
+        .nav-container { max-width: 1280px; margin: 0 auto; padding: 12px 24px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; align-items: center; }
+        .nav-btn { background: transparent; border: none; font-size: 1.05rem; font-weight: 600; padding: 10px 26px; border-radius: 60px; cursor: pointer; transition: 0.2s; color: #4A341E; font-family: inherit; display: inline-flex; align-items: center; gap: 8px; }
+        .nav-btn i { font-size: 1.1rem; }
+        .nav-btn:hover { background: #E9DFCF; transform: translateY(-2px); }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(183,110,46,0.3); }
+        .page { display: none; animation: fadeIn 0.25s ease; }
+        .page.active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .hero { background: linear-gradient(135deg, #2D2B1F 0%, #4A3B28 100%), url('https://www.transparenttextures.com/patterns/bamboo.png'); background-blend-mode: overlay; color: #FFFAF0; padding: 60px 0 70px; text-align: center; border-radius: 0 0 48px 48px; margin-bottom: 40px; }
+        .hero h1 { font-size: 3rem; margin-bottom: 12px; }
+        .badge { background: rgba(255,215,150,0.2); display: inline-block; padding: 6px 18px; border-radius: 40px; font-size: 0.85rem; margin-bottom: 16px; }
+        .btn-random-song { background: rgba(255,215,150,0.2); backdrop-filter: blur(8px); border: 1px solid #FFD99B; padding: 10px 24px; border-radius: 60px; color: #FFEFD0; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .section-title { font-size: 1.8rem; font-weight: 700; border-left: 5px solid var(--primary); padding-left: 18px; margin: 40px 0 28px; }
+        .interactive-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; margin: 30px 0; }
+        .interactive-card { background: white; border-radius: 32px; padding: 24px; text-align: center; box-shadow: var(--shadow-sm); border: 1px solid #F0E2D0; }
+        .btn-interact { background: var(--primary); border: none; padding: 10px 20px; border-radius: 40px; color: white; font-weight: bold; cursor: pointer; margin: 12px 0; display: inline-flex; gap: 8px; }
+        .fortune-text { background: #FEF5E8; border-radius: 24px; padding: 14px; margin-top: 12px; font-style: italic; }
+        .support-counter { font-size: 2.4rem; font-weight: 800; color: var(--primary); }
+        .songs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 28px; margin-bottom: 40px; }
+        .song-card { background: white; border-radius: 32px; overflow: hidden; box-shadow: var(--shadow-sm); transition: 0.2s; }
+        .song-card:hover { transform: translateY(-5px); }
+        .song-img { height: 150px; background: #DBC8A8; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .song-content { padding: 20px; }
+        .song-title { font-size: 1.5rem; font-weight: 700; }
+        .song-lyrics { background: #FEF5E8; border-radius: 20px; padding: 10px; margin: 12px 0; font-size: 0.85rem; }
+        .song-actions { display: flex; justify-content: space-between; }
+        .btn-sound { background: var(--primary); border: none; padding: 6px 14px; border-radius: 40px; color: white; cursor: pointer; }
+        .like-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #BC9A6C; display: flex; gap: 6px; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 24px; margin-bottom: 30px; }
+        .gallery-item { background: white; border-radius: 28px; overflow: hidden; cursor: pointer; transition: 0.2s; }
+        .gallery-item img { width: 100%; height: 170px; object-fit: cover; }
+        .gallery-caption { padding: 12px; text-align: center; }
+        .game-double { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin: 30px 0; }
+        .game-panel { background: #FFFCF5; border-radius: 36px; padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid #F2E4D0; }
+        .duel-question { background: #F2E8DA; border-radius: 28px; padding: 18px; font-weight: 600; margin: 15px 0; }
+        .duel-options { display: flex; flex-direction: column; gap: 12px; margin: 18px 0; }
+        .duel-option { background: white; border: 2px solid #E6D5BD; border-radius: 60px; padding: 10px 16px; cursor: pointer; transition: 0.1s; }
+        .duel-option:hover { background: #FFF0DF; border-color: var(--primary);}
+        .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+        .memory-card { aspect-ratio: 1; background: linear-gradient(145deg, #D8C4A6, #CBB78C); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; box-shadow: 0 6px 0 #8B6946; }
+        .memory-card.flipped { background: #FEF0DF; transform: scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+        .memory-card.matched { visibility: hidden; pointer-events: none; opacity: 0; }
+        .quiz-area { background: #FFF8EF; border-radius: 36px; padding: 24px; margin-top: 32px; }
+        .quiz-question { background: white; border-radius: 24px; padding: 16px; margin-bottom: 20px; }
+        .quiz-submit { background: var(--secondary); color: white; border: none; padding: 10px 24px; border-radius: 40px; cursor: pointer; }
+        .message-board { background: #FFFFFFE6; border-radius: 36px; padding: 28px; box-shadow: var(--shadow-sm); }
+        .message-form { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+        .message-form input, .message-form textarea { border: 1px solid #E6D5BD; border-radius: 60px; padding: 10px 18px; flex: 1; background: white; }
+        .message-form button { background: var(--primary); border: none; padding: 0 24px; border-radius: 60px; color: white; font-weight: bold; cursor: pointer; }
+        .messages-list { max-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+        .message-item { background: #FDF7ED; padding: 14px 18px; border-radius: 28px; border-left: 5px solid var(--accent); display: flex; justify-content: space-between; align-items: center; }
+        .delete-msg { background: none; border: none; color: #C58F6E; cursor: pointer; font-size: 1.1rem; }
+        footer { background: #2C2418; color: #DDD2C0; text-align: center; padding: 28px; border-radius: 36px 36px 0 0; margin-top: 60px; }
+        .toast-msg { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2C2418; color: #FFE7C4; padding: 8px 20px; border-radius: 60px; z-index: 2000; font-size: 0.85rem; pointer-events: none; animation: fadeUp 0.2s; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateX(-50%) translateY(20px);} to { opacity: 1; transform: translateX(-50%) translateY(0);} }
+        .music-note { position: fixed; pointer-events: none; font-size: 1.4rem; z-index: 9999; animation: floatNote 0.9s ease-out forwards; }
+        @keyframes floatNote { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-70px) rotate(20deg); opacity: 0; } }
+        .timeline { display: flex; flex-direction: column; gap: 24px; margin: 30px 0; }
+        .timeline-item { background: white; border-radius: 28px; padding: 20px 28px; display: flex; gap: 20px; flex-wrap: wrap; box-shadow: var(--shadow-sm); border-left: 8px solid var(--accent); }
+        .timeline-year { font-size: 1.8rem; font-weight: 800; color: var(--primary); min-width: 100px; }
+        @media (max-width: 700px) { .nav-btn { padding: 6px 16px; font-size: 0.9rem; } .memory-grid { gap: 8px; } }
+    </style>
+</head>
+<body>
+
+<div class="nav-bar">
+    <div class="nav-container">
+        <button class="nav-btn active" data-page="home"><i class="fas fa-home"></i> 首页·山歌缘起</button>
+        <button class="nav-btn" data-page="library"><i class="fas fa-music"></i> 曲艺画廊</button>
+        <button class="nav-btn" data-page="games"><i class="fas fa-gamepad"></i> 互动乐园</button>
+        <button class="nav-btn" data-page="community"><i class="fas fa-comments"></i> 山友社区</button>
+    </div>
+</div>
+
+<!-- 页面1: 首页 山歌缘起 -->
+<div id="page-home" class="page active-page">
+    <div class="hero">
+        <div class="container">
+            <div class="badge"><i class="fas fa-microphone-alt"></i> 国家级非物质文化遗产 · 2006</div>
+            <h1>木洞山歌</h1>
+            <div class="sub" style="font-size:1.1rem; max-width:600px; margin:10px auto;">巴渝民歌活化石 · 山间田坝的天籁回响</div>
+            <button class="btn-random-song" id="randomSongBtnHome"><i class="fas fa-music"></i> 🎲 随机听一曲山歌 🎲</button>
+        </div>
+    </div>
+    <div class="container">
+        <div style="display:flex; flex-wrap:wrap; gap:24px; background:white; border-radius:32px; padding:28px; margin-bottom:20px;">
+            <div style="flex:2"><h3><i class="fas fa-tree"></i> 千年山歌 · 岁月回甘</h3><p>木洞山歌源于重庆市巴南区木洞镇，是劳动人民在田间薅秧、打谷时即兴创作的民歌。曲调高亢嘹亮，2006年列入第一批国家级非物质文化遗产名录。代表曲目《薅秧歌》《什么过河》《闹元宵》至今传唱。</p></div>
+            <div style="flex:1; background:#F6EFE3; border-radius:28px; padding:20px; text-align:center;"><div><span style="font-size:2rem; font-weight:800; color:#B76E2E;">200+</span><br>传统曲目</div><div style="margin-top:12px;"><span style="font-size:2rem; font-weight:800; color:#B76E2E;">3</span><br>主要腔调</div></div>
+        </div>
+        <div class="section-title"><i class="fas fa-history"></i> 历史脉络 · 岁月如歌</div>
+        <div class="timeline">
+            <div class="timeline-item"><div class="timeline-year">唐代</div><div><strong>竹枝遗风</strong> —— 木洞山歌最早可追溯至唐代竹枝词，刘禹锡曾描述“巴渝民间联歌竹枝”。</div></div>
+            <div class="timeline-item"><div class="timeline-year">明清</div><div><strong>兴盛时期</strong> —— 木洞成为川东重要水驿，山歌与码头号子交融，形成“禾籁”等特色腔调。</div></div>
+            <div class="timeline-item"><div class="timeline-year">1950s-80s</div><div><strong>采集记录</strong> —— 音乐家深入木洞镇，整理出200余首曲目，编印《木洞山歌集》。</div></div>
+            <div class="timeline-item"><div class="timeline-year">2006</div><div><strong>非遗认证</strong> —— 列入第一批国家级非物质文化遗产名录，编号Ⅱ-26。</div></div>
+            <div class="timeline-item"><div class="timeline-year">至今</div><div><strong>活态传承</strong> —— 建立传习所，校园传承，数字化保护让山歌“云端”传唱。</div></div>
+        </div>
+        <div class="interactive-grid">
+            <div class="interactive-card"><h3><i class="fas fa-fortune-cookie"></i> 山歌灵签</h3><p>抽取千年山歌吉言</p><button id="drawFortuneBtn" class="btn-interact"><i class="fas fa-hand-peace"></i> 抽一支灵签</button><div id="fortuneDisplay" class="fortune-text">✨ 点击抽取 ✨</div></div>
+            <div class="interactive-card"><h3><i class="fas fa-hands-clapping"></i> 大众传唱助力</h3><p>每一次点击都是守护非遗</p><div class="support-counter" id="supportCount">0</div><button id="supportBtn" class="btn-interact"><i class="fas fa-drumstick-bite"></i> 敲响山鼓 · 助力</button><div id="supportFeedback" style="margin-top:12px;"></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- 页面2: 曲艺画廊 -->
+<div id="page-library" class="page">
+    <div class="container">
+        <div class="section-title"><i class="fas fa-head-side-vr"></i> 经典曲目 · 声动山野</div>
+        <div class="songs-grid" id="songsGrid"></div>
+        <div class="section-title"><i class="fas fa-images"></i> 光影 · 木洞记忆</div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+</div>
+
+<!-- 页面3: 互动乐园 -->
+<div id="page-games" class="page">
+    <div class="container">
+        <div class="section-title"><i class="fas fa-gamepad"></i> 山歌挑战 · 智趣非遗</div>
+        <div class="game-double">
+            <div class="game-panel">
+                <div class="game-title" style="font-size:1.4rem; font-weight:700;"><i class="fas fa-comment-dots"></i> 🎤 对歌挑战赛 · 接山歌</div>
+                <div class="duel-question" id="duelQuestion">加载中...</div>
+                <div class="duel-options" id="duelOptions"></div>
+                <div class="duel-feedback" id="duelFeedback"></div>
+                <div class="score-badge" id="duelScore" style="background:#E9DFCF; display:inline-block; padding:4px 16px; border-radius:40px;">🏆 得分: 0</div>
+                <button id="nextDuelBtn" class="btn-interact" style="margin-top:18px; background:#5D8A3C;"><i class="fas fa-forward"></i> 下一题</button>
+            </div>
+            <div class="game-panel">
+                <div class="game-title" style="font-size:1.4rem; font-weight:700;"><i class="fas fa-brain"></i> 🧠 山歌记忆翻牌</div>
+                <div class="memory-grid" id="memoryGrid"></div>
+                <div class="memory-status" id="memoryStatus">配对成功 0 / 4 对</div>
+                <button id="resetMemoryBtn" class="btn-interact" style="background:#8B6946;"><i class="fas fa-undo-alt"></i> 洗牌重开</button>
+            </div>
+        </div>
+        <div class="quiz-area" id="quizArea"></div>
+    </div>
+</div>
+
+<!-- 页面4: 山友社区 -->
+<div id="page-community" class="page">
+    <div class="container">
+        <div class="section-title"><i class="fas fa-comments"></i> 山友留言 · 共话非遗</div>
+        <div class="message-board">
+            <div class="message-form">
+                <input type="text" id="msgName" placeholder="您的名字">
+                <textarea id="msgContent" rows="2" placeholder="分享你对木洞山歌的感受或建议..."></textarea>
+                <button id="postMsgBtn"><i class="fas fa-paper-plane"></i> 留下足迹</button>
+            </div>
+            <div class="messages-list" id="messagesList"></div>
+        </div>
+        <div style="margin-top:40px; background:#FFF2E4; border-radius:32px; padding:24px; text-align:center;">
+            <i class="fas fa-heart" style="color:#D8A24A; font-size:2rem;"></i>
+            <p style="margin-top:8px;">每一个留言都是对非遗的守护，让木洞山歌传唱不息。</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <p><i class="fas fa-leaf"></i> 守护非遗根脉 · 传唱巴渝乡音 · 多页互动体验</p>
+        <p style="font-size:0.8rem; margin-top:8px;">木洞山歌数字非遗馆 | 对歌翻牌 灵签助力 让文化活起来</p>
+    </div>
+</footer>
+
+<script>
+    // ---------- 全局工具 ----------
+    function showToast(msg) { let t=document.querySelector('.toast-msg'); if(t) t.remove(); let div=document.createElement('div'); div.className='toast-msg'; div.innerText=msg; document.body.appendChild(div); setTimeout(()=>div.remove(),2200);}
+    function createNote(x,y) { let span=document.createElement('div'); span.className='music-note'; span.innerHTML=['🎵','🎶','🎤','🍃','🎙️'][Math.floor(Math.random()*5)]; span.style.left=x+'px'; span.style.top=y+'px'; document.body.appendChild(span); setTimeout(()=>span.remove(),1000);}
+    document.body.addEventListener('click',(e)=>{ if(e.target.closest('.btn-interact')||e.target.closest('.btn-sound')||e.target.closest('.like-btn')||e.target.closest('.duel-option')||e.target.closest('.memory-card')||e.target.closest('.btn-random-song')){ createNote(e.clientX, e.clientY); } });
+
+    function speakText(text) {
+        if(!window.speechSynthesis) return;
+        if(window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+        let utt=new SpeechSynthesisUtterance(text); utt.lang='zh-CN'; utt.rate=0.9;
+        let setVoice=()=>{ let voices=window.speechSynthesis.getVoices(); let cn=voices.find(v=>v.lang.includes('zh')&&(v.name.includes('Tingting')||v.name.includes('Xiaoxiao'))); if(cn) utt.voice=cn; window.speechSynthesis.speak(utt);};
+        if(window.speechSynthesis.getVoices().length) setVoice(); else window.speechSynthesis.onvoiceschanged=setVoice;
+    }
+
+    // ========== 🎵 音频管理 ==========
+    let currentAudio = null;
+    let currentPlayingIndex = -1; // 当前正在播放的歌曲索引，-1表示无
+
+    // 重置所有播放按钮的图标为“播放”状态
+    function resetAllPlayButtons() {
+        document.querySelectorAll('.btn-sound').forEach(btn => {
+            btn.innerHTML = `<i class="fas fa-play-circle"></i> 播放音乐`;
+        });
+    }
+
+    // 停止当前音频并清理状态
+    function stopCurrentAudio() {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            currentAudio = null;
+        }
+        currentPlayingIndex = -1;
+        resetAllPlayButtons();
+    }
+
+    // 更新特定索引按钮为“暂停”图标
+    function setButtonToPause(index) {
+        document.querySelectorAll('.btn-sound').forEach((btn, i) => {
+            if (i === index) {
+                btn.innerHTML = `<i class="fas fa-pause-circle"></i> 暂停`;
+            }
+        });
+    }
+
+    // 🎵 核心播放/暂停切换函数
+    function togglePlayPause(index) {
+        const song = songs[index];
+        if (!song.audioSrc) {
+            showToast('⚠️ 暂无音频文件');
+            return;
+        }
+
+        // 情况1：当前正在播放同一首歌
+        if (currentPlayingIndex === index && currentAudio) {
+            if (!currentAudio.paused) {
+                // 正在播放 → 暂停
+                currentAudio.pause();
+                // 按钮变回播放图标
+                document.querySelectorAll('.btn-sound').forEach((btn, i) => {
+                    if (i === index) btn.innerHTML = `<i class="fas fa-play-circle"></i> 播放音乐`;
+                });
+                showToast(`⏸️ 已暂停：${song.name}`);
+            } else {
+                // 已暂停 → 继续播放
+                currentAudio.play();
+                setButtonToPause(index);
+                showToast(`▶️ 继续播放：${song.name}`);
+            }
+            return;
+        }
+
+        // 情况2：播放新歌（包括当前无音频，或播放其他歌曲）
+        // 先停止之前的音频
+        stopCurrentAudio();
+
+        // 创建新音频
+        const audio = new Audio(song.audioSrc);
+        audio.play().catch(e => {
+            console.warn('播放失败:', e);
+            showToast('🔇 音频播放失败，请检查文件是否存在');
+            return;
+        });
+
+        currentAudio = audio;
+        currentPlayingIndex = index;
+        setButtonToPause(index);
+        showToast(`🎵 正在播放：${song.name}`);
+
+        // 播放结束时重置状态
+        audio.addEventListener('ended', () => {
+            stopCurrentAudio();
+            showToast(`✅ 播放完毕：${song.name}`);
+        });
+    }
+
+    // ========== 🎵 歌曲数据 ==========
+    const songs = [
+        { name: "薅秧歌", lyrics: "太阳出来照山坡吔，唱支山歌多快活～薅秧除草不怕累，丰收时节笑呵呵！", imgIcon: "🌾", speechText: "薅秧歌：太阳出来照山坡，唱支山歌多快活，薅秧除草不怕累，丰收时节笑呵呵。", audioSrc: "audio/薅秧歌.mp3" },
+        { name: "什么过河", lyrics: "什么过河脚蹬脚？鸭子过河脚蹬脚，蜗牛背上两个包～对歌问答乐陶陶", imgIcon: "🦆", speechText: "什么过河：什么过河脚蹬脚，什么背上两个包？鸭子过河脚蹬脚，蜗牛背上两个包。", audioSrc: "audio/什么过河.mp3" },
+        { name: "闹元宵", lyrics: "正月十五闹元宵，龙灯花鼓多热闹，山歌一唱彩头好，五谷丰登步步高！", imgIcon: "🏮", speechText: "闹元宵：正月十五闹元宵，龙灯花鼓多热闹，山歌一唱彩头好，五谷丰登步步高。", audioSrc: "audio/闹元宵.mp3" }
+    ];
+
+    let songLikes = [0, 0, 0];
+
+    function renderSongs() {
+        let container = document.getElementById('songsGrid');
+        if (!container) return;
+        container.innerHTML = '';
+        songs.forEach((s, idx) => {
+            let card = document.createElement('div');
+            card.className = 'song-card';
+            card.innerHTML = `
+                <div class="song-img">${s.imgIcon} 🎵</div>
+                <div class="song-content">
+                    <div class="song-title">${s.name}</div>
+                    <div class="song-lyrics">“ ${s.lyrics} ”</div>
+                    <div class="song-actions">
+                        <button class="btn-sound" data-idx="${idx}"><i class="fas fa-play-circle"></i> 播放音乐</button>
+                        <button class="like-btn" data-idx="${idx}"><i class="fas fa-heart"></i> <span class="like-count">${songLikes[idx]}</span></button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        // 绑定播放/暂停事件
+        document.querySelectorAll('.btn-sound').forEach((btn, idx) => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                togglePlayPause(idx);
+            });
+        });
+
+        // 点赞
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let idx = btn.getAttribute('data-idx');
+                if (idx !== null) {
+                    songLikes[idx]++;
+                    btn.querySelector('.like-count').innerText = songLikes[idx];
+                    showToast(`❤️ 感谢喜欢《${songs[idx].name}》`);
+                }
+                e.stopPropagation();
+            });
+        });
+    }
+
+    // 首页随机播放
+    function randomSongPlay() {
+        let r = Math.floor(Math.random() * songs.length);
+        togglePlayPause(r); // 使用统一函数，实现切换逻辑
+    }
+
+    // 影像画廊
+    const galleryItems = [
+        { imgUrl: "img/木洞1.webp", caption: "🏞️ 木洞镇 · 山歌发源地" },
+        { imgUrl: "img/木洞2.webp", caption: "🎤 传承人田间教唱" },
+        { imgUrl: "img/木洞3.webp", caption: "🎋 禾籁腔调 · 劳动号子" },
+        { imgUrl: "img/木洞4.webp", caption: "🏮 元宵山歌对唱盛会" }
+    ];
+    function renderGallery() {
+        let g = document.getElementById('galleryGrid');
+        if (!g) return;
+        g.innerHTML = '';
+        galleryItems.forEach(item => {
+            let div = document.createElement('div');
+            div.className = 'gallery-item';
+            div.innerHTML = `<img src="${item.imgUrl}" loading="lazy"><div class="gallery-caption">${item.caption}</div>`;
+            div.addEventListener('click', () => {
+                speakText(`木洞山歌印象：${item.caption.replace(/[🏞️🎤🎋🏮]/g, '')}`);
+                showToast(`📸 你欣赏了：${item.caption}`);
+            });
+            g.appendChild(div);
+        });
+    }
+
+    // 非遗测验
+    const quizData = [
+        { q: "木洞山歌被列入国家级非物质文化遗产的年代是？", opt: ["1998", "2006", "2010", "2015"], ans: 1 },
+        { q: "以下哪个是木洞山歌的代表性腔调？", opt: ["信天游", "禾籁", "花儿", "长调"], ans: 1 },
+        { q: "木洞山歌主要流行于？", opt: ["四川成都", "重庆巴南区木洞镇", "湖北恩施", "贵州遵义"], ans: 1 }
+    ];
+    let quizUser = [null, null, null];
+    function renderQuiz() {
+        let qc = document.getElementById('quizArea');
+        if (!qc) return;
+        let html = '';
+        quizData.forEach((q, i) => {
+            html += `<div class="quiz-question"><p><strong>${i+1}. ${q.q}</strong></p>`;
+            q.opt.forEach((o, oi) => {
+                html += `<label class="quiz-option" style="display:inline-block; margin-right:16px;"><input type="radio" name="q${i}" value="${oi}"> ${o}</label>`;
+            });
+            html += `</div>`;
+        });
+        html += `<button class="quiz-submit" id="submitQuizBtn"><i class="fas fa-leaf"></i> 提交考卷</button><div id="quizResultBox" class="quiz-result"></div>`;
+        qc.innerHTML = html;
+
+        for (let i=0; i<quizData.length; i++) {
+            document.querySelectorAll(`input[name="q${i}"]`).forEach(r => {
+                r.addEventListener('change', (e) => { quizUser[i] = parseInt(e.target.value); });
+            });
+        }
+        document.getElementById('submitQuizBtn')?.addEventListener('click', () => {
+            let score = 0, res = [];
+            for (let i=0; i<quizData.length; i++) {
+                if (quizUser[i] === quizData[i].ans) score++;
+                res.push(`<p>${i+1}. ${quizUser[i]===quizData[i].ans ? '✅正确' : '❌错误'} 正确答案:${quizData[i].opt[quizData[i].ans]}</p>`);
+            }
+            document.getElementById('quizResultBox').innerHTML = `<strong>得分:${score}/${quizData.length}</strong><br>${res.join('')}`;
+            speakText(score === quizData.length ? "太厉害了！木洞山歌专家！" : `您答对了${score}题，继续加油！`);
+            showToast(`📖 非遗知识得分 ${score}/${quizData.length}`);
+        });
+    }
+
+    // 留言板
+    let messages = [
+        { name: "山歌迷小周", content: "小时候外婆常唱《薅秧歌》，回忆满满！", time: Date.now() - 86400000 },
+        { name: "非遗守护者", content: "希望更多年轻人听到木洞山歌～", time: Date.now() - 43200000 }
+    ];
+    function renderMessages() {
+        let ml = document.getElementById('messagesList');
+        if (!ml) return;
+        if (messages.length === 0) {
+            ml.innerHTML = '<div style="text-align:center;padding:20px;">✨ 暂无留言，写下你的山歌情缘 ✨</div>';
+            return;
+        }
+        ml.innerHTML = '';
+        messages.slice().reverse().forEach((m, idx) => {
+            let div = document.createElement('div');
+            div.className = 'message-item';
+            div.innerHTML = `<div><strong>${escapeHtml(m.name)}</strong> <span style="font-size:0.7rem;">${new Date(m.time).toLocaleDateString()}</span><br>${escapeHtml(m.content)}</div>
+                             <button class="delete-msg" data-idx="${messages.length-1-idx}"><i class="fas fa-trash-alt"></i></button>`;
+            ml.appendChild(div);
+        });
+        document.querySelectorAll('.delete-msg').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let idx = btn.getAttribute('data-idx');
+                if (idx !== null) { messages.splice(parseInt(idx), 1); renderMessages(); showToast("🗑️ 留言已删"); }
+                e.stopPropagation();
+            });
+        });
+    }
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m] || m);
+    }
+    function addMessage(name, content) {
+        if (!name.trim()) name = "山歌友人";
+        if (!content.trim()) { showToast("📢 请写下你想说的话"); return false; }
+        messages.push({ name: name.trim().slice(0,20), content: content.trim(), time: Date.now() });
+        renderMessages();
+        speakText("感谢留言，让木洞山歌薪火相传。");
+        showToast("✨ 留言成功，非遗有你更精彩 ✨");
+        return true;
+    }
+    function initMsgBoard() {
+        document.getElementById('postMsgBtn')?.addEventListener('click', () => {
+            addMessage(document.getElementById('msgName').value, document.getElementById('msgContent').value);
+            document.getElementById('msgName').value = '';
+            document.getElementById('msgContent').value = '';
+        });
+        renderMessages();
+    }
+
+    // 山歌灵签 & 助力
+    const fortunes = ["🌾 薅秧歌声落，丰收满山坡。愿你今日勤劳有获。","🦆 什么过河脚蹬脚？生活如对歌，喜乐常伴。","🏮 闹元宵灯火明，山歌一唱喜气盈。","🎋 禾籁声声响，烦恼随风散。","🌙 月亮弯弯照山崖，愿你身边有爱笑口常开。","🍃 山中无岁月，山歌有春秋。愿你自在如风。"];
+    function drawFortune() {
+        let txt = fortunes[Math.floor(Math.random()*fortunes.length)];
+        document.getElementById('fortuneDisplay').innerHTML = `🍃 “${txt}” 🍃`;
+        speakText(txt);
+        showToast("📜 山歌灵签已现");
+    }
+    let supportTotal = 0;
+    function loadSupport() {
+        let s = localStorage.getItem('mudong_support');
+        supportTotal = s ? parseInt(s) : 528;
+        document.getElementById('supportCount').innerText = supportTotal;
+    }
+    function addSupport() {
+        supportTotal++;
+        localStorage.setItem('mudong_support', supportTotal);
+        document.getElementById('supportCount').innerText = supportTotal;
+        let fb = document.getElementById('supportFeedback');
+        if (fb) fb.innerHTML = '🥁 咚！山鼓鸣谢 · 非遗薪火+1！';
+        setTimeout(() => { if (fb) fb.innerHTML = ''; }, 1500);
+        showToast(`🙌 感谢助力！总助力 ${supportTotal} 次`);
+        if (supportTotal % 7 === 0) speakText("感谢每一位朋友，木洞山歌生生不息！");
+    }
+
+    // 对歌挑战赛
+    const duelQuestions = [
+        { text: "🌾 “太阳出来照山坡，________？”", options: ["唱支山歌多快活","薅秧除草不怕累","月亮弯弯照山崖","山歌赶着走"], correct: 0, explanation: "木洞山歌《薅秧歌》唱到：太阳出来照山坡，唱支山歌多快活。" },
+        { text: "🦆 “什么过河脚蹬脚？鸭子过河脚蹬脚，什么背上两个包？”", options: ["田螺背上两个包","蜗牛背上两个包","螃蟹背上两个包","乌龟背上两个包"], correct: 1, explanation: "传统问答歌：蜗牛背上两个包～" },
+        { text: "🏮 “正月十五闹元宵，龙灯花鼓多热闹，山歌一唱_______。”", options: ["五谷丰登步步高","彩头好丰收笑","幸福生活万年长","锣鼓喧天乐陶陶"], correct: 0, explanation: "《闹元宵》：五谷丰登步步高。" },
+        { text: "🎵 木洞山歌“禾籁”腔调通常在什么场合演唱？", options: ["田间薅秧打谷","婚庆喜宴","祭祀仪式","集市叫卖"], correct: 0, explanation: "禾籁是劳动号子，多在田间劳作时唱。" }
+    ];
+    let currentDuelIdx = 0, duelScore = 0;
+    function renderDuel() {
+        let q = duelQuestions[currentDuelIdx];
+        document.getElementById('duelQuestion').innerHTML = q.text;
+        let optsDiv = document.getElementById('duelOptions');
+        optsDiv.innerHTML = '';
+        q.options.forEach((opt, idx) => {
+            let btn = document.createElement('div');
+            btn.className = 'duel-option';
+            btn.innerHTML = opt;
+            btn.onclick = () => checkAnswer(idx);
+            optsDiv.appendChild(btn);
+        });
+        document.getElementById('duelFeedback').innerHTML = '';
+        document.getElementById('duelScore').innerHTML = `🏆 得分: ${duelScore}`;
+    }
+    function checkAnswer(selected) {
+        let q = duelQuestions[currentDuelIdx];
+        let allOpts = document.querySelectorAll('.duel-option');
+        allOpts.forEach(opt => opt.style.pointerEvents = 'none');
+        if (selected === q.correct) {
+            duelScore += 10;
+            document.getElementById('duelFeedback').innerHTML = `✅ 正确！ ${q.explanation}  +10分 🎉`;
+            speakText("对答如流！太棒了！");
+            showToast("🎤 +10分，山歌达人！");
+        } else {
+            document.getElementById('duelFeedback').innerHTML = `❌ 哎呀不对，正确答案是：${q.options[q.correct]}。${q.explanation}`;
+            speakText(`再听听山歌知识：${q.explanation}`);
+            showToast("再接再厉，学习山歌文化！");
+        }
+        document.getElementById('duelScore').innerHTML = `🏆 得分: ${duelScore}`;
+        setTimeout(() => {
+            currentDuelIdx = (currentDuelIdx + 1) % duelQuestions.length;
+            renderDuel();
+            allOpts.forEach(opt => opt.style.pointerEvents = 'auto');
+        }, 1600);
+    }
+    function nextDuelManually() {
+        currentDuelIdx = (currentDuelIdx + 1) % duelQuestions.length;
+        renderDuel();
+        document.getElementById('duelFeedback').innerHTML = '新题目来啦！';
+        showToast("🎵 新对歌挑战开始！");
+    }
+
+    // 记忆翻牌
+    const memoryPairs = [{ emoji: "🌾", name: "薅秧歌" },{ emoji: "🦆", name: "什么过河" },{ emoji: "🏮", name: "闹元宵" },{ emoji: "🎋", name: "禾籁腔" }];
+    let memoryCards = [], flippedIndices = [], matchedCount = 0, lockBoard = false;
+    function initMemoryGame() {
+        let cards = [];
+        memoryPairs.forEach(pair => {
+            cards.push({ id: pair.emoji, emoji: pair.emoji, name: pair.name, matched: false, flipped: false });
+            cards.push({ id: pair.emoji, emoji: pair.emoji, name: pair.name, matched: false, flipped: false });
+        });
+        for (let i=cards.length-1; i>0; i--) {
+            let j = Math.floor(Math.random()*(i+1));
+            [cards[i], cards[j]] = [cards[j], cards[i]];
+        }
+        memoryCards = cards; flippedIndices = []; matchedCount = 0; lockBoard = false;
+        renderMemoryBoard();
+    }
+    function renderMemoryBoard() {
+        let grid = document.getElementById('memoryGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        memoryCards.forEach((card, idx) => {
+            let div = document.createElement('div');
+            div.className = 'memory-card';
+            if (card.flipped || card.matched) div.classList.add('flipped');
+            if (card.matched) div.classList.add('matched');
+            div.innerHTML = (card.flipped || card.matched) ? card.emoji : '❓';
+            div.addEventListener('click', () => flipCard(idx));
+            grid.appendChild(div);
+        });
+        document.getElementById('memoryStatus').innerHTML = `配对成功 ${matchedCount} / ${memoryPairs.length} 对`;
+        if (matchedCount === memoryPairs.length) {
+            document.getElementById('memoryStatus').innerHTML = '🎉 太厉害了！山歌记忆大师！ 🎉';
+            speakText("恭喜你完成了山歌记忆翻牌！");
+            showToast("🏅 翻牌通关，获得“山歌传承者”称号！");
+        }
+    }
+    function flipCard(idx) {
+        if (lockBoard) return;
+        let card = memoryCards[idx];
+        if (card.matched || card.flipped) return;
+        card.flipped = true;
+        flippedIndices.push(idx);
+        renderMemoryBoard();
+        if (flippedIndices.length === 2) {
+            lockBoard = true;
+            let [i1, i2] = flippedIndices;
+            let c1 = memoryCards[i1], c2 = memoryCards[i2];
+            if (c1.id === c2.id) {
+                c1.matched = c2.matched = true;
+                matchedCount++;
+                speakText(`配对成功！${c1.name}`);
+                showToast(`🎉 配对成功: ${c1.name} 🎉`);
+                flippedIndices = []; lockBoard = false;
+                renderMemoryBoard();
+            } else {
+                setTimeout(() => {
+                    c1.flipped = c2.flipped = false;
+                    flippedIndices = []; lockBoard = false;
+                    renderMemoryBoard();
+                }, 800);
+            }
+        }
+    }
+    function resetMemory() {
+        initMemoryGame();
+        speakText("洗牌啦，再来一次山歌记忆挑战！");
+        showToast("🃏 牌局已重置，挑战你的记忆力");
+    }
+
+    // 页面切换
+    function switchPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(`page-${pageId}`).classList.add('active-page');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`.nav-btn[data-page="${pageId}"]`).classList.add('active');
+    }
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchPage(btn.getAttribute('data-page')));
+    });
+
+    // 初始化
+    function initAll() {
+        renderSongs();
+        renderGallery();
+        renderQuiz();
+        initMsgBoard();
+        loadSupport();
+        document.getElementById('drawFortuneBtn')?.addEventListener('click', drawFortune);
+        document.getElementById('supportBtn')?.addEventListener('click', addSupport);
+        document.getElementById('randomSongBtnHome')?.addEventListener('click', randomSongPlay);
+        document.getElementById('nextDuelBtn')?.addEventListener('click', nextDuelManually);
+        document.getElementById('resetMemoryBtn')?.addEventListener('click', resetMemory);
+        currentDuelIdx = 0; duelScore = 0; renderDuel();
+        initMemoryGame();
+    }
+    initAll();
+</script>
+</body>
+</html>
